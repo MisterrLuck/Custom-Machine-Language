@@ -1,28 +1,32 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 string line;
 string code;
-int i = 0;
+string formatCode;
 ifstream exeFile;
 
 int main(int argc, char *argv[]) {
-    // Error checking
-    if (argc != 2) {
-        return -1;
-    }
+    // Error checking - has to have an argument
+    if (argc != 2) {return -1;}
 
     // Opening and reading the file
     exeFile.open(argv[1]);
-    // did the file succesfully open
+    // did the file succesfully open?
     if (exeFile.is_open()) {
         // while there are still lines
         while (getline(exeFile, line)) {
             code = code.append(line);
-       }
-    }
+        }
+        exeFile.close();
+    } else {return -1;}
+
+    // Formatting
+    // remove all spacing
+    code.erase(remove(code.begin(), code.end(), ' '), code.end());
 
     cout << code;
     return 0;
