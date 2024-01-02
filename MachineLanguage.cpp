@@ -22,13 +22,9 @@ int main(int argc, char *argv[]) {
         while (getline(exeFile, line)) {
             code = code.append(line);
        }
-
     }
 
-    // printing maybe
-    for ( ; i < 8; i++) {
-        cout << code[i] << endl;
-    }
+    cout << code;
     return 0;
 }
 
