@@ -2,11 +2,12 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 string line;
 string code;
-string formatCode;
+vector<string> formatCode;
 ifstream exeFile;
 
 int main(int argc, char *argv[]) {
@@ -30,6 +31,8 @@ int main(int argc, char *argv[]) {
     // only have hexadecimal characters
     bool notHex = code.find_first_not_of("1234567890abcdefABCDEF") != string::npos;
     if (notHex) {cout << "you should only have hexadecimal characters";return -1;}
+    // make sure file length is divisible by 2
+    if (code.size()%2 != 0) {cout << "incorrect number of characters";return -1;}
 
     cout << code;
     return 0;
