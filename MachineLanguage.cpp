@@ -3,6 +3,7 @@
 #include <string>
 using namespace std;
 
+string line;
 string code;
 int i = 0;
 ifstream exeFile;
@@ -18,8 +19,8 @@ int main(int argc, char *argv[]) {
     // did the file succesfully open
     if (exeFile.is_open()) {
         // while there are still lines
-        while (getline(exeFile, code)) {
-
+        while (getline(exeFile, line)) {
+            code = code.append(line);
        }
 
     }
@@ -34,6 +35,11 @@ int main(int argc, char *argv[]) {
 // 32 * (32bit register)
 // register $0 is hardwired to zero and writes to it are discarded
 // register $31 is the link register
+
+// run commands
+
+// .\MachineLanguage.exe test.mll
+
 
 // git commands
 
