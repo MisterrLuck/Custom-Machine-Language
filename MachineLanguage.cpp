@@ -11,7 +11,7 @@ ifstream exeFile;
 
 int main(int argc, char *argv[]) {
     // Error checking - has to have an argument
-    if (argc != 2) {return -1;}
+    if (argc != 2) {cout << "Has to have an argument";return -1;}
 
     // Opening and reading the file
     exeFile.open(argv[1]);
@@ -22,11 +22,14 @@ int main(int argc, char *argv[]) {
             code = code.append(line);
         }
         exeFile.close();
-    } else {return -1;}
+    } else {cout << "file didn't open properly";return -1;}
 
     // Formatting
     // remove all spacing
     code.erase(remove(code.begin(), code.end(), ' '), code.end());
+    // only have hexadecimal characters
+    bool notHex = code.find_first_not_of("1234567890abcdefABCDEF") != string::npos;
+    if (notHex) {cout << "you should only have hexadecimal characters";return -1;}
 
     cout << code;
     return 0;
