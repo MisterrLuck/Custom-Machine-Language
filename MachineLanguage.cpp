@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <cstdint> // for the 8 bit integers
 using namespace std;
 
 string line;
@@ -51,3 +52,55 @@ int main(int argc, char *argv[]) {
 
 // git add --all -- :!.vscode
 // git commit -m ""
+
+
+// Opcodes
+
+// 0 OPERANDS:
+
+// NOP - 00h - does nothing
+// ADD - 01h - adds register 1 and 2 and outputs into 3, carry goes into register
+// SUB
+// log AND
+// log NOT
+// log OR
+// log XOR
+// CLF - clear carry flag
+// STC - set carry flag
+// DEC - decrement
+// INC - increment
+// Jcc - jump if condition - library of jump conditions
+// JMP
+// MOV - copy data from one place to another
+// STI - store immediate
+// IN  - get input, convert to hex. warning for overflow
+// OUT - output as hex, decimal, binary, or ascii - different commands
+// ROL - rotate bits left
+// ROR - rotate bits right
+// SAL - shift left
+// SAR - shift right
+
+
+// Registers
+
+// 01 - 
+// 02 - 
+// 03 - 
+// 04 - carry flag - may move somewhere else
+// 05 - program counter
+// 06
+// 07
+// 08
+// 09
+// 0A
+// 0B
+// 0C
+// 0D
+// 0E
+// 0F
+// 10
+
+// storage registers
+// 11
+// ..
+// 20
