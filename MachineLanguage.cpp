@@ -8,7 +8,7 @@ using namespace std;
 
 string line;
 string code;
-vector<string> formatCode;
+vector<vector<string>> formatCode;
 ifstream exeFile;
 
 int main(int argc, char *argv[]) {
@@ -35,13 +35,30 @@ int main(int argc, char *argv[]) {
     // make sure file length is divisible by 2
     if (code.size()%2 != 0) {cout << "incorrect number of characters";return -1;}
 
+    for (int i = 0; i < code.size()/2; i++) {
+        int pos = i*2;
+
+    }
+
     cout << code;
     return 0;
 }
 
-// 32 * (32bit register)
-// register $0 is hardwired to zero and writes to it are discarded
-// register $31 is the link register
+struct Registers {
+    // from 01 to 0A is settings registers. I dont know what difference this makes
+    uint8_t reg[255];
+
+    void setReg(int regInd, uint8_t val) {
+        reg[regInd] = val;
+    }
+    uint8_t getReg(int regInd) {
+        return reg[regInd];
+    }
+    void copMem(int regInd1, int regInd2) {
+        // value from regInd1 copied into regInd2
+        setReg(regInd2, getReg(regInd1));
+    }
+};
 
 // run commands
 
@@ -56,51 +73,47 @@ int main(int argc, char *argv[]) {
 
 // Opcodes
 
-// 0 OPERANDS:
+// HEXADECIMAL is the normal state
 
-// NOP - 00h - does nothing
-// ADD - 01h - adds register 1 and 2 and outputs into 3, carry goes into register
-// SUB
-// log AND
-// log NOT
-// log OR
-// log XOR
+// NOP - does nothing
+// ADD - adds register 01h and 02h and outputs into 03h, carry goes into register
+// SUB - subtracts register 01h and 02h and outputs into 03h, negative
+// log NOT - performs NOT operation on register 04h  and outputs to 06h
+// log AND - performs AND operation on register 04h and 05h and outputs to 06h
+// log OR - performs AND operation on register 04h and 05h and outputs to 06h
+// log XOR - performs AND operation on register 04h and 05h and outputs to 06h
 // CLF - clear carry flag
 // STC - set carry flag
-// DEC - decrement
-// INC - increment
-// Jcc - jump if condition - library of jump conditions
-// JMP
-// MOV - copy data from one place to another
-// STI - store immediate
-// IN  - get input, convert to hex. warning for overflow
-// OUT - output as hex, decimal, binary, or ascii - different commands
-// ROL - rotate bits left
-// ROR - rotate bits right
-// SAL - shift left
-// SAR - shift right
+// DEC - decrement register by 1 - OPERAND: register address
+// INC - increment register by 1 - OPERAND: register address
+// JMP - jump to command number - OPERAND: location
+// MOV - copy data from one place to another - OPERAND 1: beginning register - OPERAND 2: target register
+// STI - store immediate - OPERAND 1: target register - OPERAND 2: immediate value
+// IN  - get input, as char, converts to hex. warning for overflow - OPERAND: register to store input
+// ROL - rotate bits left - OPERAND: register
+// ROR - rotate bits right - OPERAND: register
+// SAL - shift left - OPERAND: register
+// SAR - shift right - OPERAND: register
 
+// Jcc - jump if condition - library of jump conditions
+// OUT - output as hex, decimal, binary, or ascii - different commands
 
 // Registers
 
-// 01 - 
-// 02 - 
-// 03 - 
-// 04 - carry flag - may move somewhere else
-// 05 - program counter
-// 06
-// 07
-// 08
-// 09
-// 0A
-// 0B
-// 0C
-// 0D
-// 0E
-// 0F
-// 10
+// Register settings - i dont know another name for this
+// 01 - input 1 for add and sub
+// 02 - input 2 for add and sub
+// 03 - output for add and sub
+// 04 - input 1 for all logic gates
+// 05 - input 2 for logic gates except NOT
+// 06 - output for all logic gates
+// 07 - carry flag
+// 08 - negative flag 
+// 09 - shift bit
+// 0A - program counter
 
-// storage registers
-// 11
+// Storage registers
+
+// 0B
 // ..
-// 20
+// ff
