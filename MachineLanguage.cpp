@@ -1,15 +1,26 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <algorithm>
+#include <fstream> // file opening and reading
+#include <string> // strings
+#include <algorithm> // to erase spaces and newlines from code // i think
 #include <vector>
 #include <cstdint> // for the 8 bit integers
+#include <map> // for the lookup table
+#include <iomanip> // hex to decimal
+#include <sstream> // for isstringstream to convert hex to dec
 using namespace std;
+
+
+template <size_t N>
+bool isInArr(int (&arr)[N], int val);
 
 string line;
 string code;
 vector<vector<string>> formatCode;
 ifstream exeFile;
+
+// opcodes with 1 and 2 operands
+int com1[] = {9, 10, 11, 12, 13, 14, 15, 16};
+int com2[] = {17, 18};
 
 int main(int argc, char *argv[]) {
     // Error checking - has to have an argument
@@ -37,10 +48,42 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < code.size()/2; i++) {
         int pos = i*2;
+        vector<string> currCommand;
+        string hexStr;
+        hexStr += code[pos];
+        hexStr += code[pos+1];
+        currCommand.push_back(hexStr);
 
+        int comDec;
+        istringstream(hexStr) >> hex >> comDec;
+        if (isInArr(com1, comDec)) {
+            i++;
+            pos = i*2;
+            hexStr = code[pos];
+            hexStr += code[pos+1];
+            currCommand.push_back(hexStr);
+        }
+        else if (isInArr(com2, comDec)) {
+            for (int j = 0; j < 2; j++) {
+                i++;
+                pos = i*2;
+                hexStr = code[pos];
+                hexStr += code[pos+1];
+                currCommand.push_back(hexStr);
+            }
+        }
+        
+        formatCode.push_back(currCommand);
     }
 
-    cout << code;
+    for (auto &row : formatCode) {
+        for (auto &column : row) {
+            cout << column << " ";
+        }
+        cout << endl;
+    }
+
+
     return 0;
 }
 
@@ -60,6 +103,18 @@ struct Registers {
     }
 };
 
+
+template <size_t N>
+bool isInArr(int (&arr)[N], int val) {
+    for (int element : arr) {
+        if (element == val) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 // run commands
 
 // .\MachineLanguage.exe test.mll
@@ -75,25 +130,25 @@ struct Registers {
 
 // HEXADECIMAL is the normal state
 
-// NOP - does nothing
-// ADD - adds register 01h and 02h and outputs into 03h, carry goes into register
-// SUB - subtracts register 01h and 02h and outputs into 03h, negative
-// log NOT - performs NOT operation on register 04h  and outputs to 06h
-// log AND - performs AND operation on register 04h and 05h and outputs to 06h
-// log OR - performs AND operation on register 04h and 05h and outputs to 06h
-// log XOR - performs AND operation on register 04h and 05h and outputs to 06h
-// CLF - clear carry flag
-// STC - set carry flag
-// DEC - decrement register by 1 - OPERAND: register address
-// INC - increment register by 1 - OPERAND: register address
-// JMP - jump to command number - OPERAND: location
-// MOV - copy data from one place to another - OPERAND 1: beginning register - OPERAND 2: target register
-// STI - store immediate - OPERAND 1: target register - OPERAND 2: immediate value
-// IN  - get input, as char, converts to hex. warning for overflow - OPERAND: register to store input
-// ROL - rotate bits left - OPERAND: register
-// ROR - rotate bits right - OPERAND: register
-// SAL - shift left - OPERAND: register
-// SAR - shift right - OPERAND: register
+// NOP - 00 - does nothing
+// ADD - 01 -  adds register 01h and 02h and outputs into 03h, carry goes into register
+// SUB - 02 - subtracts register 01h and 02h and outputs into 03h, negative
+// NOT - 03 - performs NOT operation on register 04h  and outputs to 06h
+// AND - 04 - performs AND operation on register 04h and 05h and outputs to 06h
+// OR  - 05 - performs AND operation on register 04h and 05h and outputs to 06h
+// XOR - 06 - performs AND operation on register 04h and 05h and outputs to 06h
+// CLF - 07 - clear carry flag
+// STC - 08 - set carry flag
+// DEC - 09 - decrement register by 1 - OPERAND: register address
+// INC - 0A - increment register by 1 - OPERAND: register address
+// JMP - 0B - jump to command number - OPERAND: location
+// IN  - 0C - get input, as char, converts to hex. warning for overflow - OPERAND: register to store input
+// ROL - 0D - rotate bits left - OPERAND: register
+// ROR - 0E - rotate bits right - OPERAND: register
+// SAL - 0F - shift left - OPERAND: register
+// SAR - 10 - shift right - OPERAND: register
+// MOV - 11 - copy data from one place to another - OPERAND 1: source register - OPERAND 2: target register
+// STI - 12 - store immediate - OPERAND 1: target register - OPERAND 2: immediate value
 
 // Jcc - jump if condition - library of jump conditions
 // OUT - output as hex, decimal, binary, or ascii - different commands
@@ -101,6 +156,7 @@ struct Registers {
 // Registers
 
 // Register settings - i dont know another name for this
+// 00 - constant 0
 // 01 - input 1 for add and sub
 // 02 - input 2 for add and sub
 // 03 - output for add and sub
