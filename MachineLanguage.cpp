@@ -7,11 +7,18 @@
 #include <map> // for the lookup table
 #include <iomanip> // hex to decimal
 #include <sstream> // for isstringstream to convert hex to dec
+
+#define carryFlag 7
+#define negFlag 8
+#define shiftBit 9
+#define progCount 10
 using namespace std;
 
-
+// declaring structs and functions to define below main()
+struct Registers;
 template <size_t N>
 bool isInArr(int (&arr)[N], int val);
+void printVec(vector<vector<string>> vec);
 
 string line;
 string code;
@@ -46,16 +53,21 @@ int main(int argc, char *argv[]) {
     // make sure file length is divisible by 2
     if (code.size()%2 != 0) {cout << "incorrect number of characters";return -1;}
 
+    // goes through every pair of opcodes. 
     for (int i = 0; i < code.size()/2; i++) {
         int pos = i*2;
         vector<string> currCommand;
         string hexStr;
+        // sets hexStr to the current hexcode
         hexStr += code[pos];
         hexStr += code[pos+1];
+        // pushes to the current command vector
         currCommand.push_back(hexStr);
 
         int comDec;
+        // gets opcode for command in decimal and looks up number of operands
         istringstream(hexStr) >> hex >> comDec;
+        // one operand, pushes to after the opcode
         if (isInArr(com1, comDec)) {
             i++;
             pos = i*2;
@@ -63,6 +75,7 @@ int main(int argc, char *argv[]) {
             hexStr += code[pos+1];
             currCommand.push_back(hexStr);
         }
+        // two operands, pushes both to after the opcode
         else if (isInArr(com2, comDec)) {
             for (int j = 0; j < 2; j++) {
                 i++;
@@ -72,17 +85,12 @@ int main(int argc, char *argv[]) {
                 currCommand.push_back(hexStr);
             }
         }
-        
+        // pushes current command to the overall formatted code
         formatCode.push_back(currCommand);
     }
 
-    for (auto &row : formatCode) {
-        for (auto &column : row) {
-            cout << column << " ";
-        }
-        cout << endl;
-    }
-
+    // prints out formatted code for debugging
+    printVec(formatCode);
 
     return 0;
 }
@@ -114,6 +122,14 @@ bool isInArr(int (&arr)[N], int val) {
     return false;
 }
 
+void printVec(vector<vector<string>> vec) {
+    for (auto &row : vec) {
+        for (auto &column : row) {
+            cout << column << " ";
+        }
+        cout << endl;
+    }
+}
 
 // run commands
 
