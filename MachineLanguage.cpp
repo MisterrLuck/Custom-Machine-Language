@@ -26,8 +26,8 @@ vector<vector<string>> formatCode;
 ifstream exeFile;
 
 // opcodes with 1 and 2 operands
-int com1[] = {9, 10, 11, 12, 13, 14, 15, 16};
-int com2[] = {17, 18};
+int com1[] = {9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 24, 25, 26, 27};
+int com2[] = {17, 18, 21, 22, 23};
 
 int main(int argc, char *argv[]) {
     // Error checking - has to have an argument
@@ -165,9 +165,15 @@ void printVec(vector<vector<string>> vec) {
 // SAR - 10 - shift right - OPERAND: register
 // MOV - 11 - copy data from one place to another - OPERAND 1: source register - OPERAND 2: target register
 // STI - 12 - store immediate - OPERAND 1: target register - OPERAND 2: immediate value
-
-// Jcc - jump if condition - library of jump conditions
-// OUT - output as hex, decimal, binary, or ascii - different commands
+// JNZ - 13 - jump if register "0B" is not zero - OPERAND: jump location
+// JWZ - 14 - jump if register "0B" is zero - OPERAND: jump location
+// JIE - 15 - jump if "0B" is equal to operand register value - OPERAND 1: jump location - OPERAND 2: register to compare
+// JIG - 16 - jump if "0B" is greater than the operand register value - OPERAND 1: jump location - OPERAND 2: register to compare
+// JIL - 17 - jump if "0B" is less than the operand register value - OPERAND 1: jump location - OPERAND 2: register to compare
+// OTH - 18 - output as hexadecimal - OPERAND: register to output
+// OTD - 19 - output as decimal - OPERAND: register to output
+// OTB - 1A - output as binary - OPERAND: register to output
+// OTA - 1B - output as ascii - OPERAND: register to output
 
 // Registers
 
@@ -183,6 +189,7 @@ void printVec(vector<vector<string>> vec) {
 // 08 - negative flag 
 // 09 - shift bit
 // 0A - program counter
+// 0B - jump register
 
 // Storage registers
 
