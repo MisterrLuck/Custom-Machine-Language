@@ -8,17 +8,41 @@
 #include <iomanip> // hex to decimal
 #include <sstream> // for isstringstream to convert hex to dec
 
-#define carryFlag 7
-#define negFlag 8
-#define shiftBit 9
-#define progCount 10
+#define ZERO 0x00
+#define MATHINP1 0x01  // 01 - input 1 for add and sub
+#define MATHINP2 0x02  // 02 - input 2 for add and sub
+#define MATHOUT 0x03   // 03 - output for add and sub
+#define LOGINP1 0x04   // 04 - input 1 for all logic gates
+#define LOGINP2 0x05   // 05 - input 2 for logic gates except NOT
+#define LOGOUT 0x06   // 06 - output for all logic gates
+#define CARRYFLAG 0x07 // 07 - carry flag
+#define NEGFLAG 0x08   // 08 - negative flag 
+#define SHIFTFLAG 0x09 // 09 - shift flag
+#define PROGCOUNT 0x0A // 0A - program counter
+#define JMPREG 0x0B    // 0B - jump register
 using namespace std;
 
-// declaring structs and functions to define below main()
-struct Registers;
+// declaring functions to define below main()
 template <size_t N>
 bool isInArr(int (&arr)[N], int val);
 void printVec(vector<vector<string>> vec);
+void runCode(vector<vector<string>> code);
+
+struct Registers {
+    // from 01 to 0A is settings registers. I dont know what difference this makes
+    uint8_t reg[255] = {0};
+
+    void setReg(int regInd, uint8_t val) {
+        reg[regInd] = val;
+    }
+    uint8_t getReg(int regInd) {
+        return reg[regInd];
+    }
+    void copMem(int regInd1, int regInd2) {
+        // value from regInd1 copied into regInd2
+        setReg(regInd2, getReg(regInd1));
+    }
+} Register;
 
 string line;
 string code;
@@ -90,27 +114,11 @@ int main(int argc, char *argv[]) {
     }
 
     // prints out formatted code for debugging
-    printVec(formatCode);
+    // printVec(formatCode);
+    runCode(formatCode);
 
     return 0;
 }
-
-struct Registers {
-    // from 01 to 0A is settings registers. I dont know what difference this makes
-    uint8_t reg[255];
-
-    void setReg(int regInd, uint8_t val) {
-        reg[regInd] = val;
-    }
-    uint8_t getReg(int regInd) {
-        return reg[regInd];
-    }
-    void copMem(int regInd1, int regInd2) {
-        // value from regInd1 copied into regInd2
-        setReg(regInd2, getReg(regInd1));
-    }
-};
-
 
 template <size_t N>
 bool isInArr(int (&arr)[N], int val) {
@@ -131,6 +139,107 @@ void printVec(vector<vector<string>> vec) {
     }
 }
 
+void runCode(vector<vector<string>> code) {
+    Register.reg[PROGCOUNT] = 0x00;
+    for ( ; Register.reg[PROGCOUNT] < code.size(); Register.reg[PROGCOUNT]++) {
+        int opcode;
+
+        istringstream(code[Register.reg[PROGCOUNT]][0]) >> hex >> opcode;
+        switch (opcode) {
+            case 0x01:
+            {// ADD
+                int num1 = Register.reg[MATHINP1];
+                int num2 = Register.reg[MATHINP2];
+                int sum = (num1+num2);
+                Register.reg[CARRYFLAG] = ((num1+num2)&0b100000000)/256;
+                Register.reg[MATHOUT] = sum;
+            }break;
+            // case 0x02: // SUB
+            //     break;
+            case 0x03:
+            {// NOT
+                int num = ~Register.reg[LOGINP1];
+                Register.reg[LOGOUT] = num;
+            }break;
+            case 0x04:
+            {// AND
+                int num1 = Register.reg[LOGINP1];
+                int num2 = Register.reg[LOGINP2];
+                int out = num1 & num2;
+                Register.reg[LOGOUT] = out;
+            }break;
+            case 0x05:
+            {// OR
+                int num1 = Register.reg[LOGINP1];
+                int num2 = Register.reg[LOGINP2];
+                int out = num1 | num2;
+                Register.reg[LOGOUT, out];
+            }break;
+            case 0x06:
+            {// XOR
+                int num1 = Register.reg[LOGINP1];
+                int num2 = Register.reg[LOGINP2];
+                int out = num1 ^ num2;
+                Register.reg[LOGOUT] = out;
+            }break;
+            case 0x07:
+            {// CLF
+                Register.reg[CARRYFLAG] = 0x00;
+            }break;
+            case 0x08:
+            {// STC
+                Register.reg[CARRYFLAG] = 0x01;
+            }break;
+            case 0x09:
+            {// DEC
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                Register.reg[reg]--;
+            }break;
+            case 0x0A:
+            {// INC
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                Register.reg[reg]++;
+            }break;
+            case 0x0B:
+            {// JMP
+                int location;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                Register.reg[PROGCOUNT] = location-1;
+            }break;
+
+            case 0x12:
+            {// STI
+                int reg, val;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> val;
+                Register.reg[reg] = val;
+            }break;
+
+            case 0x18:
+            {// OTH
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                cout << hex << int(Register.reg[reg]) << dec << endl;
+            }break;
+            case 0x19:
+            {// OTD
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                cout << int(Register.reg[reg]) << endl;
+            }break; 
+
+            case 0x1B:
+            {// OTA
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                cout << char(Register.reg[reg]) << endl;
+            }break;
+        }
+    }
+}
+
 // run commands
 
 // .\MachineLanguage.exe test.mll
@@ -147,12 +256,12 @@ void printVec(vector<vector<string>> vec) {
 // HEXADECIMAL is the normal state
 
 // NOP - 00 - does nothing
-// ADD - 01 -  adds register 01h and 02h and outputs into 03h, carry goes into register
-// SUB - 02 - subtracts register 01h and 02h and outputs into 03h, negative
+// ADD - 01 - adds register 01h and 02h and outputs into 03h, carry goes into carry flag
+// SUB - 02 - subtracts register 01h and 02h and outputs into 03h, negative goes into negative flag
 // NOT - 03 - performs NOT operation on register 04h  and outputs to 06h
 // AND - 04 - performs AND operation on register 04h and 05h and outputs to 06h
-// OR  - 05 - performs AND operation on register 04h and 05h and outputs to 06h
-// XOR - 06 - performs AND operation on register 04h and 05h and outputs to 06h
+// OR  - 05 - performs OR operation on register 04h and 05h and outputs to 06h
+// XOR - 06 - performs XOR operation on register 04h and 05h and outputs to 06h
 // CLF - 07 - clear carry flag
 // STC - 08 - set carry flag
 // DEC - 09 - decrement register by 1 - OPERAND: register address
