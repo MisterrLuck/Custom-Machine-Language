@@ -17,7 +17,7 @@
 #define LOGOUT 0x06   // 06 - output for all logic gates
 #define CARRYFLAG 0x07 // 07 - carry flag
 #define NEGFLAG 0x08   // 08 - negative flag 
-#define SHIFTFLAG 0x09 // 09 - shift flag
+#define SHIFTBIT 0x09 // 09 - shift flag
 #define PROGCOUNT 0x0A // 0A - program counter
 #define JMPREG 0x0B    // 0B - jump register
 using namespace std;
@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
     // printVec(formatCode);
     runCode(formatCode);
 
+
     return 0;
 }
 
@@ -151,7 +152,7 @@ void runCode(vector<vector<string>> code) {
                 int num1 = Register.reg[MATHINP1];
                 int num2 = Register.reg[MATHINP2];
                 int sum = (num1+num2);
-                Register.reg[CARRYFLAG] = ((num1+num2)&0b100000000)/256;
+                Register.reg[CARRYFLAG] = ((num1+num2)&0b100000000)>>8;
                 Register.reg[MATHOUT] = sum;
             }break;
             // case 0x02: // SUB
@@ -208,7 +209,64 @@ void runCode(vector<vector<string>> code) {
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
                 Register.reg[PROGCOUNT] = location-1;
             }break;
+            case 0x0C:
+            // {//IN doesnt work
 
+            //     int reg;
+            //     istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+            //     char c;
+            //     cout << dec;
+            //     cin >> c;
+            //     cout << "this wont print" << endl;
+            //     Register.reg[reg] = c;
+            // }
+            case 0x0D:
+            {// ROL
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                int num = Register.reg[reg];
+                int shiftBit = (num & 0b10000000)>>7;
+                num <<= 1;
+                num |= shiftBit;
+                Register.reg[reg] = num;
+            }break;
+            case 0x0E:
+            {// ROR
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                int num = Register.reg[reg];
+                int shiftBit = (num & 0b1)<<7;
+                num >>= 1;
+                num |= shiftBit;
+                Register.reg[reg] = num;
+            }break;
+            case 0x0F:
+            {// SAL
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                int num = Register.reg[reg];
+                int shiftBit = (num & 0b10000000)>>7;
+                Register.reg[SHIFTBIT] = shiftBit;
+                num <<= 1;
+                Register.reg[reg] = num;
+            }break;
+            case 0x10:
+            {// SAR
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                int num = Register.reg[reg];
+                int shiftBit = (num & 0b1);
+                Register.reg[SHIFTBIT] = shiftBit;
+                num >>= 1;
+                Register.reg[reg] = num;
+            }break;
+            case 0x11:
+            {// MOV
+                int reg1, reg2;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg1;
+                istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> reg2;
+                Register.reg[reg2] = Register.reg[reg1];
+            }break;
             case 0x12:
             {// STI
                 int reg, val;
@@ -216,7 +274,49 @@ void runCode(vector<vector<string>> code) {
                 istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> val;
                 Register.reg[reg] = val;
             }break;
-
+            case 0x13:
+            {//JNZ
+                int location;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                if (Register.reg[JMPREG] != 0) {
+                    Register.reg[PROGCOUNT] = location-1;
+                }
+            }break;
+            case 0x14:
+            {//JWZ
+                int location;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                if (Register.reg[JMPREG] == 0) {
+                    Register.reg[PROGCOUNT] = location-1;
+                }
+            }break;
+            case 0x15:
+            {//JIE
+                int location, reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> reg;
+                if (Register.reg[JMPREG] == Register.reg[reg]) {
+                    Register.reg[PROGCOUNT] = location-1;
+                }
+            }break;
+            case 0x16:
+            {//JIG
+                int location, reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> reg;
+                if (Register.reg[JMPREG] > Register.reg[reg]) {
+                    Register.reg[PROGCOUNT] = location-1;
+                }
+            }break;
+            case 0x17:
+            {//JIL
+                int location, reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                istringstream(code[Register.reg[PROGCOUNT]][2]) >> hex >> reg;
+                if (Register.reg[JMPREG] < Register.reg[reg]) {
+                    Register.reg[PROGCOUNT] = location-1;
+                }
+            }break;
             case 0x18:
             {// OTH
                 int reg;
@@ -267,7 +367,7 @@ void runCode(vector<vector<string>> code) {
 // DEC - 09 - decrement register by 1 - OPERAND: register address
 // INC - 0A - increment register by 1 - OPERAND: register address
 // JMP - 0B - jump to command number - OPERAND: location
-// IN  - 0C - get input, as char, converts to hex. warning for overflow - OPERAND: register to store input
+// IN  - 0C - get input as char, converts to int. warning for overflow - OPERAND: register to store input
 // ROL - 0D - rotate bits left - OPERAND: register
 // ROR - 0E - rotate bits right - OPERAND: register
 // SAL - 0F - shift left - OPERAND: register
