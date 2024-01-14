@@ -7,6 +7,7 @@
 #include <map> // for the lookup table
 #include <iomanip> // hex to decimal
 #include <sstream> // for isstringstream to convert hex to dec
+#include <windows.h> // for sleep()
 
 #define ZERO 0x00
 #define MATHINP1 0x01  // 01 - input 1 for add and sub
@@ -321,21 +322,24 @@ void runCode(vector<vector<string>> code) {
             {// OTH
                 int reg;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
-                cout << hex << int(Register.reg[reg]) << dec << endl;
+                cout << hex << int(Register.reg[reg]) << dec;
             }break;
             case 0x19:
             {// OTD
                 int reg;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
-                cout << int(Register.reg[reg]) << endl;
+                cout << int(Register.reg[reg]);
             }break; 
 
             case 0x1B:
             {// OTA
                 int reg;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
-                cout << char(Register.reg[reg]) << endl;
+                cout << char(Register.reg[reg]);
             }break;
+            default:
+                Sleep(50);
+                break;
         }
     }
 }
