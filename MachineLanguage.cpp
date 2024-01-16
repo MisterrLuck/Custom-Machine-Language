@@ -21,6 +21,7 @@
 #define SHIFTBIT 0x09 // 09 - shift flag
 #define PROGCOUNT 0x0A // 0A - program counter
 #define JMPREG 0x0B    // 0B - jump register
+#define RETLOCATION 0x0C // 0C - return location
 using namespace std;
 
 // declaring functions to define below main()
@@ -208,6 +209,7 @@ void runCode(vector<vector<string>> code) {
             {// JMP
                 int location;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> location;
+                Register.reg[RETLOCATION] = Register.reg[PROGCOUNT];
                 Register.reg[PROGCOUNT] = location-1;
             }break;
             case 0x0C:
@@ -337,6 +339,10 @@ void runCode(vector<vector<string>> code) {
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
                 cout << char(Register.reg[reg]);
             }break;
+            case 0x1C:
+            {// RET
+                Register.reg[PROGCOUNT] = Register.reg[RETLOCATION]-1;
+            }
             default:
                 Sleep(50);
                 break;
@@ -370,7 +376,7 @@ void runCode(vector<vector<string>> code) {
 // STC - 08 - set carry flag
 // DEC - 09 - decrement register by 1 - OPERAND: register address
 // INC - 0A - increment register by 1 - OPERAND: register address
-// JMP - 0B - jump to command number - OPERAND: location
+// JMP - 0B - jump to command number. ALL JUMP COMMANDS SET REGISTER '0C' TO OLD LOCATION- OPERAND: location
 // IN  - 0C - get input as char, converts to int. warning for overflow - OPERAND: register to store input
 // ROL - 0D - rotate bits left - OPERAND: register
 // ROR - 0E - rotate bits right - OPERAND: register
@@ -387,6 +393,7 @@ void runCode(vector<vector<string>> code) {
 // OTD - 19 - output as decimal - OPERAND: register to output
 // OTB - 1A - output as binary - OPERAND: register to output
 // OTA - 1B - output as ascii - OPERAND: register to output
+// RET - 1C - returns to location at 0C register
 
 // Registers
 
@@ -403,9 +410,10 @@ void runCode(vector<vector<string>> code) {
 // 09 - shift bit
 // 0A - program counter
 // 0B - jump register
+// 0C - old location - when you jump you this is the original location
 
 // Storage registers
 
-// 0B
+// 0D
 // ..
 // ff
