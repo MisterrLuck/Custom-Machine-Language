@@ -213,16 +213,16 @@ void runCode(vector<vector<string>> code) {
                 Register.reg[PROGCOUNT] = location-1;
             }break;
             case 0x0C:
-            // {//IN doesnt work
-
-            //     int reg;
-            //     istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
-            //     char c;
-            //     cout << dec;
-            //     cin >> c;
-            //     cout << "this wont print" << endl;
-            //     Register.reg[reg] = c;
-            // }
+            {//IN
+                int reg;
+                istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                char c;
+                cin >> c;
+                cout << "char as int " << (int) c << endl;
+                cout << "reg num " << reg << endl;
+                Register.reg[reg] = (int) c;
+                cout << int(Register.reg[reg]) << endl;
+            }break;
             case 0x0D:
             {// ROL
                 int reg;
@@ -330,6 +330,8 @@ void runCode(vector<vector<string>> code) {
             {// OTD
                 int reg;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
+                cout << "reg num in output " << reg << endl;
+                cout << "reg 0x10 " << int(Register.reg[0x10]) << endl;
                 cout << int(Register.reg[reg]);
             }break; 
 
@@ -342,7 +344,7 @@ void runCode(vector<vector<string>> code) {
             case 0x1C:
             {// RET
                 Register.reg[PROGCOUNT] = Register.reg[RETLOCATION]-1;
-            }
+            }break;
             default:
                 Sleep(50);
                 break;
