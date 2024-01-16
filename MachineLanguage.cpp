@@ -56,11 +56,16 @@ int com1[] = {9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 24, 25, 26, 27};
 int com2[] = {17, 18, 21, 22, 23};
 
 int main(int argc, char *argv[]) {
-    // Error checking - has to have an argument
-    if (argc != 2) {cout << "Has to have an argument";return -1;}
-
-    // Opening and reading the file
-    exeFile.open(argv[1]);
+    // if has an argument, open the file
+    if (argc >= 2) {
+        // Opening and reading the file
+        exeFile.open(argv[1]);
+    } else {
+        cout << "enter your filename" << endl << ">> ";
+        string fname;
+        cin >> fname;
+        exeFile.open(fname);
+    }
     // did the file succesfully open?
     if (exeFile.is_open()) {
         // while there are still lines
@@ -68,16 +73,16 @@ int main(int argc, char *argv[]) {
             code = code.append(line);
         }
         exeFile.close();
-    } else {cout << "file didn't open properly";return -1;}
+    } else {cerr << "file didn't open properly";}
 
     // Formatting
     // remove all spacing
     code.erase(remove(code.begin(), code.end(), ' '), code.end());
     // only have hexadecimal characters
     bool notHex = code.find_first_not_of("1234567890abcdefABCDEF") != string::npos;
-    if (notHex) {cout << "you should only have hexadecimal characters";return -1;}
+    if (notHex) {cerr << "you should only have hexadecimal characters";}
     // make sure file length is divisible by 2
-    if (code.size()%2 != 0) {cout << "incorrect number of characters";return -1;}
+    if (code.size()%2 != 0) {cerr << "incorrect number of characters";}
 
     // goes through every pair of opcodes. 
     for (int i = 0; i < code.size()/2; i++) {
@@ -218,10 +223,7 @@ void runCode(vector<vector<string>> code) {
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
                 char c;
                 cin >> c;
-                cout << "char as int " << (int) c << endl;
-                cout << "reg num " << reg << endl;
                 Register.reg[reg] = (int) c;
-                cout << int(Register.reg[reg]) << endl;
             }break;
             case 0x0D:
             {// ROL
@@ -330,8 +332,6 @@ void runCode(vector<vector<string>> code) {
             {// OTD
                 int reg;
                 istringstream(code[Register.reg[PROGCOUNT]][1]) >> hex >> reg;
-                cout << "reg num in output " << reg << endl;
-                cout << "reg 0x10 " << int(Register.reg[0x10]) << endl;
                 cout << int(Register.reg[reg]);
             }break; 
 
