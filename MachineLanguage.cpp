@@ -181,7 +181,7 @@ void runCode(vector<vector<string>> code) {
                 int num1 = Register.reg[LOGINP1];
                 int num2 = Register.reg[LOGINP2];
                 int out = num1 | num2;
-                Register.reg[LOGOUT, out];
+                Register.reg[LOGOUT] = out;
             }break;
             case 0x06:
             {// XOR
