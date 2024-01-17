@@ -1,6 +1,10 @@
 # Machine Language
 This is a programming language based on the old machine languages before assembly languages existed. All commands are in hexadecimal format, and some have operands following the initial command.
 
+You can run the code by providing your code file as an argument for the exe file.
+
+Two code examples are provided. One is a countdown from ten to show loops, printing decimal and ascii, and waiting using the NOP instruction. The other is testing input.
+
 >When using registers, you write the hexadecimal value and not the decimal value.
 
 - [Simplified Docs](#simplified-documentation)
@@ -38,7 +42,6 @@ This is a programming language based on the old machine languages before assembl
 - JIL - 17
 - OTH - 18
 - OTD - 19
-- OTB - 1A
 - OTA - 1B
 - RET - 1C
 
@@ -70,7 +73,6 @@ This is a programming language based on the old machine languages before assembl
 - JIL - 17 - jump if "0B" is less than the operand register value - OPERAND 1: jump location - OPERAND 2: register to compare
 - OTH - 18 - output as hexadecimal - OPERAND: register to output
 - OTD - 19 - output as decimal - OPERAND: register to output
-- OTB - 1A - output as binary - OPERAND: register to output
 - OTA - 1B - output as ascii - OPERAND: register to output
 - RET - 1C - returns to location at 0C register
 
