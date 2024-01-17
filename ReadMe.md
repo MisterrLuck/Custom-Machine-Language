@@ -74,7 +74,6 @@ Two code examples are provided. One is a countdown from ten to show loops, print
 - JIL - 17 - jump if "0B" is less than the operand register value - OPERAND 1: jump location - OPERAND 2: register to compare
 - OTH - 18 - output as hexadecimal - OPERAND: register to output
 - OTD - 19 - output as decimal - OPERAND: register to output
-- OTB - 1A - output as binary - OPERAND: register to output
 - OTA - 1B - output as ascii - OPERAND: register to output
 - RET - 1C - returns to location at 0C register
 
