@@ -1,6 +1,10 @@
 # Machine Language
 This is a programming language based on the old machine languages before assembly languages existed. All commands are in hexadecimal format, and some have operands following the initial command.
 
+You can run the code by providing your code file as an argument for the exe file.
+
+Two code examples are provided. One is a countdown from ten to show loops, printing decimal and ascii, and waiting using the NOP instruction. The other is testing input.
+
 >When using registers, you write the hexadecimal value and not the decimal value.
 
 - [Simplified Docs](#simplified-documentation)
