@@ -42,7 +42,6 @@ Two code examples are provided. One is a countdown from ten to show loops, print
 - JIL - 17
 - OTH - 18
 - OTD - 19
-- OTB - 1A
 - OTA - 1B
 - RET - 1C
 
