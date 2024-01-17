@@ -349,6 +349,7 @@ void runCode(vector<vector<string>> code) {
                 Sleep(50);
                 break;
         }
+    Register.reg[ZERO] = 0;
     }
 }
 
