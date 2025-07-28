@@ -3,7 +3,7 @@ This is a programming language based on the old machine languages before assembl
 
 You can run the code by providing your code file as an argument for the exe file.
 
-Two code examples are provided. One is a countdown from ten to show loops, printing decimal and ascii, and waiting using the NOP instruction. The other is testing input.
+One code example is provided. It is a countdown from ten to show loops, printing decimal and ascii, and waiting using the NOP instruction.
 
 >When using registers, you write the hexadecimal value and not the decimal value.
 
