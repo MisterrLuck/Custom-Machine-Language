@@ -5,10 +5,8 @@ This is a programming language based on the old machine languages before assembl
 ## Table Of Contents
 
 - [Usage](#usage)
-- [Simplified Docs](#simplified-documentation)
+- [Docs](#documentation)
     - [Opcodes](#opcodes)
-- [Full Docs](#full-documentation)
-    - [Opcodes](#opcodes-1)
     - [Registers](#registers)
 
 ## Usage
@@ -31,42 +29,7 @@ Refer to the documentation below to write your own programs.
 
 > When using registers, you write the hexadecimal value and not the decimal value.
 
-## Simplified Documentation
-
-### Opcodes
-
-| Name | Opcode |
-|------|--------|
-| NOP | 00 |
-| ADD | 01 |
-| SUB | 02 |
-| NOT | 03 |
-| AND | 04 |
-| OR  | 05 |
-| XOR | 06 |
-| CLF | 07 |
-| STC | 08 |
-| DEC | 09 |
-| INC | 0A |
-| JMP | 0B |
-| IN  | 0C |
-| ROL | 0D |
-| ROR | 0E |
-| SAL | 0F |
-| SAR | 10 |
-| MOV | 11 |
-| STI | 12 |
-| JNZ | 13 |
-| JWZ | 14 |
-| JIE | 15 |
-| JIG | 16 |
-| JIL | 17 |
-| OTH | 18 |
-| OTD | 19 |
-| OTA | 1B |
-| RET | 1C |
-
-## Full Documentation
+## Documentation
 
 ### Opcodes
 
