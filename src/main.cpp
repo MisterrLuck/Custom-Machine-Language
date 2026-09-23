@@ -7,7 +7,17 @@
 #include <map> // for the lookup table
 #include <iomanip> // hex to decimal
 #include <sstream> // for isstringstream to convert hex to dec
+
+#ifdef _WIN32
 #include <windows.h> // for sleep()
+#define sleep(x) Sleep(x)
+#endif
+
+#ifdef linux
+// #include <unistd.h> // for sleep()
+#include <thread>
+#define sleep(x) this_thread::sleep_for(chrono::milliseconds(x));
+#endif
 
 #define ZERO 0x00
 #define MATHINP1 0x01  // 01 - input 1 for add and sub
@@ -73,16 +83,16 @@ int main(int argc, char *argv[]) {
             code = code.append(line);
         }
         exeFile.close();
-    } else {cerr << "file didn't open properly";}
+    } else { cerr << "file didn't open properly"; return -1; }
 
     // Formatting
     // remove all spacing
     code.erase(remove(code.begin(), code.end(), ' '), code.end());
     // only have hexadecimal characters
     bool notHex = code.find_first_not_of("1234567890abcdefABCDEF") != string::npos;
-    if (notHex) {cerr << "you should only have hexadecimal characters";}
+    if (notHex) { cerr << "you should only have hexadecimal characters\n"; return -1; }
     // make sure file length is divisible by 2
-    if (code.size()%2 != 0) {cerr << "incorrect number of characters";}
+    if (code.size()%2 != 0) { cerr << "incorrect number of characters"; return -1; }
 
     // goes through every pair of opcodes. 
     for (int i = 0; i < code.size()/2; i++) {
@@ -346,7 +356,7 @@ void runCode(vector<vector<string>> code) {
                 Register.reg[PROGCOUNT] = Register.reg[RETLOCATION]-1;
             }break;
             default:
-                Sleep(50);
+                sleep(50);
                 break;
         }
     Register.reg[ZERO] = 0;

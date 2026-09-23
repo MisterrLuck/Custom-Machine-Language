@@ -1,0 +1,25 @@
+12 11 0A # Store 10 into 0x11
+12 0d 0A # Store 10 into 0x0d
+19 11    # Output value in 0x11: The counter
+1b 0d    # Output value of 0x0d as ascii (\n)
+09 11    # Decrement register 0x11
+0b 09    # Jump to 09: The wait function
+11 11 0b # Copys from 0x11 to 0x0b: the jump comparison register
+13 01    # Jump if 0x0b is not zero: Restart the loop
+0b 0e    # Jump to command 14: End to output GO!
+
+# Wait one second: 20 x 50ms
+12 0b 14 # Store 20 into 0x0b (jump comparison reg)
+00       # NOP 50 ms
+09 0b    # decrement 0x0b reg
+13 0a    # Jump if 0x0b is not zero to command 10: Continue waiting
+0b 06    # Jump 06: Out of the function
+
+# Outputs "Go!"
+12 0e 47
+12 0f 4f
+12 10 21
+1b 0e
+1b 0f
+1b 10
+1b 0d

@@ -18,10 +18,14 @@ Compile main.cpp using your compiler of choice.
 Run the program with your program as an argument.
 
 ```bash
-./main countdown.txt
+cd src/
+g++ -o main main.cpp
+./main ..examples/countdown.txt
 ```
 
-One example program is provided to you. It is located in the examples directory.
+One example program is provided to you. It is located in the examples directory. If you want to understand this example program better, there is a countdown-annotated.txt file which has comments explaining the code. Don't run this however as comments aren't implemented yet.
+
+> There have been some problems with the line feeds in the example program. If you are using windows you may have to rewrite the example program manually.
 
 Refer to the documentation below to write your own programs.
 
@@ -91,8 +95,8 @@ Refer to the documentation below to write your own programs.
 | IN   | 0C | get input as char, converts to int | register to store input |
 | ROL  | 0D | rotate bits left | register |
 | ROR  | 0E | rotate bits right | register |
-| SAL  | 0F | shift left | register |
-| SAR  | 10 | shift right | register |
+| SHL  | 0F | shift left | register |
+| SHR  | 10 | shift right | register |
 | JNZ  | 13 | jump if register "0B" is not zero | jump location |
 | JWZ  | 14 | jump if register "0B" is zero | jump location |
 | OTH  | 18 | output as hexadecimal | register to output |
@@ -125,7 +129,7 @@ Refer to the documentation below to write your own programs.
 | 08 | negative flag | 
 | 09 | shift bit |
 | 0A | program counter |
-| 0B | jump register |
+| 0B | jump comparison register |
 | 0C | return location |
 
 ### Storage Registers
